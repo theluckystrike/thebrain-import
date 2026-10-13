@@ -1,0 +1,23 @@
+.thebrain-import .thebrain-preview {
+	padding: var(--size-4-3);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m);
+	background-color: var(--background-secondary);
+}
+
+.thebrain-import .thebrain-error {
+	color: var(--text-error);
+}
+
+.thebrain-import input[type="file"] {
+	max-width: 100%;
+}
+
+.thebrain-import .thebrain-extras {
+	margin: var(--size-4-3) 0;
+}
+
+.thebrain-import summary {
+	cursor: pointer;
+	font-weight: var(--font-semibold);
+}

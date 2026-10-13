@@ -1,0 +1,81 @@
+[
+  {
+    "feature": "select-files",
+    "caption": "Select a local archive or the two JSON files.",
+    "note": "Migration.md",
+    "eval": "(async () => { const p = app.plugins.plugins['thebrain-import']; p.pro.signOut(); window.__brainArchive = \"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\"; window.__brainLoad = async () => { const m = p.openImport(); await m.selectFiles([new File([Uint8Array.from(atob(window.__brainArchive), c => c.charCodeAt(0))], 'Knowledge map.brz')]); window.__brainModal = m; return m; }; window.__brainOpen = async (folder, name, mode = 'preview') => { p.modal?.close(); const leaf = app.workspace.getLeaf(false); await leaf.setViewState({ type: name.endsWith('.canvas') ? 'canvas' : 'markdown', state: { file: folder + '/' + name, mode } }); }; window.__brainPro = async () => { if (!window.__brainOriginalHttp) window.__brainOriginalHttp = p.pro.opts.http; p.pro.opts.http = async () => ({ status: 200, json: { data: { viewer: { login: 'demo-reader' }, user: { sponsorshipForViewerAsSponsor: { isActive: true, isOneTimePayment: false, tier: { name: '$5 a month', monthlyPriceInCents: 500 } } } } } }); app.secretStorage.setSecret('thebrain-import-github-token', 'gho_' + '0'.repeat(36)); await p.pro.refreshNow(); }; p.settings = { includeTagThoughts: false, bodies: false, attachments: false, canvas: false }; p.openImport(); return 'Local demo ready'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "preview",
+    "caption": "Check duplicate names and broken endpoints before import.",
+    "eval": "(async () => { await window.__brainLoad(); return 'Preview ready'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "report",
+    "caption": "The report shows the new folder and file counts.",
+    "eval": "(async () => { const m = await window.__brainLoad(); await m.startImport(); if (!m.report) throw new Error(m.error || 'Demo import failed'); window.__brainFreeFolder = m.report.folder; return window.__brainFreeFolder; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "properties",
+    "caption": "The note keeps its thought properties.",
+    "eval": "(async () => { await window.__brainOpen(window.__brainFreeFolder, 'Knowledge map.md', 'source'); return 'Source properties'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "links",
+    "caption": "The map has child and jump wikilinks.",
+    "eval": "(async () => { await window.__brainOpen(window.__brainFreeFolder, 'Knowledge map.md'); return 'Linked notes'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "note-bodies",
+    "caption": "Pro adds the Markdown source body.",
+    "eval": "(async () => { const p = app.plugins.plugins['thebrain-import']; await window.__brainPro(); p.settings = { includeTagThoughts: false, bodies: true, attachments: true, canvas: true }; const m = await window.__brainLoad(); await m.startImport(); if (!m.report) throw new Error('Pro demo import failed'); window.__brainProFolder = m.report.folder; await window.__brainOpen(window.__brainProFolder, 'Knowledge map.md'); return 'Imported body'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "attachments",
+    "caption": "Pro copies the reading list and adds its link.",
+    "eval": "(async () => { await window.__brainOpen(window.__brainProFolder, 'Learning journal.md'); await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))); const pane = app.workspace.getMostRecentLeaf().view.containerEl; const link = [...pane.querySelectorAll('a.internal-link')].find(a => a.textContent === 'Reading list.txt'); if (!link) throw new Error('Attachment link missing'); link.scrollIntoView({ block: 'center' }); return 'Attachment link visible'; })()",
+    "zoom": 0.85
+  },
+  {
+    "feature": "canvas",
+    "caption": "Pro places the thoughts and relations in a Canvas file.",
+    "eval": "(async () => { await window.__brainOpen(window.__brainProFolder, 'TheBrain.canvas'); const v = app.workspace.getMostRecentLeaf()?.view; if (typeof v?.canvas?.zoomToFit === 'function') v.canvas.zoomToFit(); return 'Imported Canvas'; })()",
+    "wait": 1500
+  },
+  {
+    "feature": "thebrain-import",
+    "caption": "Preview the export and open the imported notes.",
+    "frames": [
+      {
+        "eval": "(async () => { const p = app.plugins.plugins['thebrain-import']; p.pro.signOut(); window.__brainArchive = \"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\"; window.__brainLoad = async () => { const m = p.openImport(); await m.selectFiles([new File([Uint8Array.from(atob(window.__brainArchive), c => c.charCodeAt(0))], 'Knowledge map.brz')]); window.__brainModal = m; return m; }; window.__brainOpen = async (folder, name, mode = 'preview') => { p.modal?.close(); const leaf = app.workspace.getLeaf(false); await leaf.setViewState({ type: name.endsWith('.canvas') ? 'canvas' : 'markdown', state: { file: folder + '/' + name, mode } }); }; window.__brainPro = async () => { if (!window.__brainOriginalHttp) window.__brainOriginalHttp = p.pro.opts.http; p.pro.opts.http = async () => ({ status: 200, json: { data: { viewer: { login: 'demo-reader' }, user: { sponsorshipForViewerAsSponsor: { isActive: true, isOneTimePayment: false, tier: { name: '$5 a month', monthlyPriceInCents: 500 } } } } } }); app.secretStorage.setSecret('thebrain-import-github-token', 'gho_' + '0'.repeat(36)); await p.pro.refreshNow(); }; p.settings = { includeTagThoughts: false, bodies: false, attachments: false, canvas: false }; p.openImport(); await window.__brainLoad(); return 'Preview ready'; })()",
+        "zoom": 0.85,
+        "hold": 1400
+      },
+      {
+        "eval": "(async () => { const m = await window.__brainLoad(); await m.startImport(); if (!m.report) throw new Error(m.error || 'Demo import failed'); window.__brainFreeFolder = m.report.folder; return window.__brainFreeFolder; })()",
+        "zoom": 0.85,
+        "hold": 1400
+      },
+      {
+        "eval": "(async () => { await window.__brainOpen(window.__brainFreeFolder, 'Knowledge map.md'); return 'Linked notes'; })()",
+        "zoom": 0.85,
+        "hold": 1400
+      },
+      {
+        "eval": "(async () => { const p = app.plugins.plugins['thebrain-import']; await window.__brainPro(); p.settings = { includeTagThoughts: false, bodies: true, attachments: true, canvas: true }; const m = await window.__brainLoad(); await m.startImport(); if (!m.report) throw new Error('Pro demo import failed'); window.__brainProFolder = m.report.folder; await window.__brainOpen(window.__brainProFolder, 'Knowledge map.md'); return 'Imported body'; })()",
+        "zoom": 0.85,
+        "hold": 1400
+      },
+      {
+        "eval": "(async () => { await window.__brainOpen(window.__brainProFolder, 'TheBrain.canvas'); const v = app.workspace.getMostRecentLeaf()?.view; if (typeof v?.canvas?.zoomToFit === 'function') v.canvas.zoomToFit(); app.plugins.plugins['thebrain-import'].modal?.close(); app.plugins.plugins['thebrain-import'].pro.signOut(); if (window.__brainOriginalHttp) app.plugins.plugins['thebrain-import'].pro.opts.http = window.__brainOriginalHttp; return 'Demo signed out'; })()",
+        "hold": 1400
+      }
+    ]
+  }
+]
