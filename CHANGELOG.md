@@ -1,5 +1,11 @@
 # thebrain-import
 
+## 1.0.3
+
+### Patch Changes
+
+- fa659a9: Upgrade fflate to 0.8.3, outside the range of a published vulnerability advisory.
+
 ## 1.0.2
 
 ### Patch Changes

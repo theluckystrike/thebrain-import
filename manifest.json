@@ -1,7 +1,7 @@
 {
 	"id": "thebrain-import",
 	"name": "TheBrain Import",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "1.13.4",
 	"description": "Convert TheBrain thoughts and links into linked Markdown notes.",
 	"author": "Michael Lip",
