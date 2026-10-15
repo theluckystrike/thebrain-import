@@ -58,7 +58,7 @@ Turn on Canvas file to create `TheBrain.canvas` in the import folder. Notes beco
 
 ## Install
 
-This source tree is a build for review. A community directory listing has not been submitted. For a manual install, build the standalone export and copy `main.js`, `manifest.json` and `styles.css` into `<vault>/.obsidian/plugins/thebrain-import/`. Enable TheBrain Import in Community plugins. The minimum version is Obsidian 1.13.4.
+TheBrain Import is available in the [Obsidian community directory](https://community.obsidian.md/plugins/thebrain-import). In Obsidian, open Settings → Community plugins and turn on community plugins if prompted. Select Browse, search for "TheBrain Import", then select Install and Enable. For a manual install, build the standalone export and copy `main.js`, `manifest.json` and `styles.css` into `<vault>/.obsidian/plugins/thebrain-import/`. Enable TheBrain Import in Community plugins. The minimum version is Obsidian 1.13.4.
 
 ## Usage
 

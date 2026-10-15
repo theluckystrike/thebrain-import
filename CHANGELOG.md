@@ -1,5 +1,11 @@
 # thebrain-import
 
+## 1.0.4
+
+### Patch Changes
+
+- b5daee9: Correct the README installation instructions to use the public Obsidian community directory listing. Keep the manual install route and minimum app version.
+
 ## 1.0.3
 
 ### Patch Changes
