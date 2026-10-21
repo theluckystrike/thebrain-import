@@ -2,6 +2,7 @@ import { PluginSettingTab, type SettingDefinitionItem } from 'obsidian';
 import { sponsorsSettingItems } from './license/github-obsidian';
 import { PRO_UI } from './pro';
 import type TheBrainImportPlugin from './main';
+import { helloSettingItems } from './hello/settings';
 
 export interface ImportSettings {
 	includeTagThoughts: boolean;
@@ -21,6 +22,11 @@ export class TheBrainImportSettingTab extends PluginSettingTab {
 	plugin: TheBrainImportPlugin;
 	constructor(app: ConstructorParameters<typeof PluginSettingTab>[0], plugin: TheBrainImportPlugin) { super(app, plugin); this.plugin = plugin; }
 	getSettingDefinitions(): SettingDefinitionItem[] {
+		// The product rows, then the "More from NoteMods" card (packages/hello).
+		return [...this.productSettingDefinitions(), ...helloSettingItems()];
+	}
+
+	productSettingDefinitions(): SettingDefinitionItem[] {
 		return [
 			{ name: 'Include tag thoughts as notes', desc: 'Kind 4 thoughts supply tags. Turn this on to create their notes too.', control: { type: 'toggle', key: 'includeTagThoughts', defaultValue: false } },
 			...(this.plugin.pro ? sponsorsSettingItems(this.plugin.pro, PRO_UI) : []),

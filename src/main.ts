@@ -6,6 +6,8 @@ import { DEFAULT_SETTINGS, TheBrainImportSettingTab, normalizeSettings, type Imp
 import { ImportModal } from './modal';
 import { makePlan, type BrainSource } from './brain';
 import { writeImport, type ImportReport } from './writer';
+import { setupHello } from './hello/index';
+import WHATS_NEW from './whats-new.json';
 
 export default class TheBrainImportPlugin extends Plugin {
 	settings: ImportSettings = { ...DEFAULT_SETTINGS };
@@ -13,6 +15,8 @@ export default class TheBrainImportPlugin extends Plugin {
 	private modal: ImportModal | null = null;
 	private importing = false;
 	async onload(): Promise<void> {
+		// First: "What's new" reads its state before the settings load (packages/hello). It does not wait.
+		setupHello(this, WHATS_NEW);
 		await this.loadSettings();
 		const pro = createGitHubSponsors(this.app, this.manifest.id, SPONSORS, this);
 		pro.init();
