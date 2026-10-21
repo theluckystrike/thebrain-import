@@ -103,3 +103,7 @@ After a successful check, Pro can work offline for up to 14 days. Sign out or a 
 ## Support
 
 The publisher is theluckystrike at notemods.com. For a bug report, include the app version, the report counts and a small export sample with private content removed. Check the limits above before reporting an unsupported export layout. Keep the original TheBrain export until you have checked the imported notes and links.
+
+## Community
+
+Questions, bugs or plugin ideas? Talk to me and other Obsidian users in [Zovo Chat](https://t.me/+k2MM-BIc7SQ5OWM0) on Telegram. It has a topic for these plugins. You can also open an issue here.
