@@ -1,6 +1,6 @@
 {
 	"name": "thebrain-import",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"private": true,
 	"description": "Convert TheBrain thoughts and links into linked Markdown notes.",
 	"main": "main.js",

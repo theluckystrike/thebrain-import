@@ -1,16 +1,10 @@
 {
 	"id": "thebrain-import",
 	"name": "TheBrain Import",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"changes": [
-		"New Send feedback command. It opens a page where you can report a problem or suggest an idea.",
 		"Does not count or write a note body with only white space.",
 		"Releases the selected export when the dialog closes during the file read."
-	],
-	"changes_user": [
-		"New Send feedback command. It opens a page where you can report a problem or suggest an idea.",
-		"A thought note that holds only blank space no longer adds an empty Notes heading or counts as a note body.",
-		"If you close the import dialog while it reads the export, the plugin no longer keeps the export in memory."
 	],
 	"tip": "You can import without a .brz archive. Select thoughts.json and links.json together in the file picker.",
 	"thanks": "Hi, I am Michael, a solo developer in Poland. TheBrain Import is one of over 100 small plugins that I make. Thank you for moving your notes into Obsidian with it.",
