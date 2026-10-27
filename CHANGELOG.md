@@ -1,5 +1,11 @@
 # thebrain-import
 
+## 1.1.2
+
+### Patch Changes
+
+- c266792: The Archive extras (Pro) toggles now show how to get Pro, with a Sponsor on GitHub button. The free import does not change.
+
 ## 1.1.1
 
 ### Patch Changes

@@ -1,6 +1,7 @@
 // Pro through GitHub Sponsors (packages/license, github.ts). product.yaml pro: holds the same values; fx check compares them.
 // Pro checks call isPro(). The modal uses onProChange(). main.ts binds the manager in onload.
 import type { SponsorsConfig, SponsorsManager } from './license/index';
+import { proNeededText, showProNotice } from './license/github-obsidian';
 
 export const SPONSORS: SponsorsConfig = {
 	// Public client id of the seller's OAuth App (device flow on, no client secret anywhere).
@@ -53,4 +54,17 @@ export function resetPro(): void {
 	unbind = null;
 	manager = null;
 	listeners.clear();
+}
+
+/** The shared Pro text for an element that is not a notice: the lead, then the next step for this user. */
+export function proText(lead: string): string {
+	return proNeededText(manager, lead);
+}
+
+/** Lead of the Pro notice for the archive extras. */
+export const PRO_EXTRAS = 'Note bodies, attachment files and the Canvas file need Pro.';
+
+/** Shows the shared Pro notice: the lead, then the next step for this user. A free user gets a Sponsor on GitHub button. */
+export function proNotice(lead: string): void {
+	showProNotice(manager, lead);
 }

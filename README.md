@@ -74,7 +74,7 @@ A second run makes another folder. It does not update a previous import. The imp
 
 After a minor or major update, this plugin opens one What's new tab in the background. The tab and settings card suggest other NoteMods plugins and Zovo Chat and link to notemods.com for feedback ([privacy](https://notemods.com/privacy/)). The tab sends no data. Turn the tab off in Settings.
 
-The plugin tab has the tag note control and the GitHub Sponsors section. The import dialog has the same tag control and three Pro toggles. A completed import saves those choices for the next run. Without Pro, the extra controls are disabled and the writer omits the extras. The free linked notes remain usable without sign-in.
+The plugin tab has the tag note control and the GitHub Sponsors section. The import dialog has the same tag control and three Pro toggles. A completed import saves those choices for the next run. Without Pro, the extra controls show a Sponsor on GitHub notice and the writer omits the extras. The free linked notes remain usable without sign-in.
 
 ## FAQ
 

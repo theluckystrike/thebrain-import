@@ -33,11 +33,13 @@ describe('TheBrain import in a vault', () => {
 			plugin.pro.signOut();
 			const modal = plugin.openImport();
 			await modal.selectFiles([new File([thoughts], 'thoughts.json'), new File([links], 'links.json')]);
-			return { preview: document.querySelector('.thebrain-preview')?.textContent, disabled: [...document.querySelectorAll('.thebrain-import .setting-item')].filter((row) => row.querySelector('.setting-item-name')?.textContent?.endsWith('(Pro)')).filter((row) => row.querySelector('.checkbox-container')?.classList.contains('is-disabled')).length };
+			return { preview: document.querySelector('.thebrain-preview')?.textContent, disabled: [...document.querySelectorAll('.thebrain-import .setting-item')].filter((row) => row.querySelector('.setting-item-name')?.textContent?.endsWith('(Pro)')).filter((row) => row.querySelector('.checkbox-container')?.classList.contains('is-disabled')).length, on: [...document.querySelectorAll('.thebrain-import .setting-item')].filter((row) => row.querySelector('.setting-item-name')?.textContent?.endsWith('(Pro)')).filter((row) => row.querySelector('.checkbox-container')?.classList.contains('is-enabled')).length };
 		}, thoughts, links);
 		expect(state.preview).toContain('20 notes');
 		expect(state.preview).toContain('Names with suffixes: S');
-		expect(state.disabled).toBe(3);
+		// Since 1.1.2 the Pro extras can be selected: they show off and a select shows the Pro notice (pro-notice.e2e.ts).
+		expect(state.disabled).toBe(0);
+		expect(state.on).toBe(0);
 	});
 	it('imports the preview through the button and creates linked notes with source frontmatter', async () => {
 		await browser.$('.thebrain-import button.mod-cta').click();

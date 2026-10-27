@@ -1,6 +1,6 @@
 import { Modal, Notice, Setting } from 'obsidian';
 import { MAX_INPUT_BYTES, makePlan, planAttachments, readArchive, readJson, type BrainSource } from './brain';
-import { isPro, onProChange } from './pro';
+import { PRO_EXTRAS, isPro, onProChange, proNotice, proText } from './pro';
 import type TheBrainImportPlugin from './main';
 import type { ImportSettings } from './settings';
 import { importFolder, type ImportReport } from './writer';
@@ -68,9 +68,14 @@ export class ImportModal extends Modal {
 		const extrasEl = el.createEl('details', { cls: 'thebrain-extras' });
 		extrasEl.open = isPro();
 		extrasEl.createEl('summary', { text: UI.extrasHeading });
-		extrasEl.createEl('p', { text: isPro() ? 'Pro is active. Choose the extras for this import.' : 'The linked notes are free. These extras need Pro. Sign in with GitHub in the plugin tab.' });
+		extrasEl.createEl('p', { text: isPro() ? 'Pro is active. Choose the extras for this import.' : proText('The linked notes are free. These extras need Pro.') });
 		for (const [key, label] of [['bodies', 'Note bodies (Pro)'], ['attachments', 'Attachment files (Pro)'], ['canvas', 'Canvas file (Pro)']] as const) {
-			new Setting(extrasEl).setName(label).addToggle((toggle) => toggle.setValue(isPro() && this.options[key]).setDisabled(this.busy || !isPro()).onChange((value) => { this.options[key] = value; }));
+			new Setting(extrasEl).setName(label).addToggle((toggle) => toggle.setValue(isPro() && this.options[key]).setDisabled(this.busy).onChange((value) => {
+				// A free user gets the Pro notice and the toggle goes back to off. setValue(false) calls this again with
+				// false, and that call returns with no change.
+				if (!isPro()) { if (value) { toggle.setValue(false); proNotice(PRO_EXTRAS); } return; }
+				this.options[key] = value;
+			}));
 		}
 		if (this.error) el.createEl('p', { text: this.error, cls: 'thebrain-error', attr: { role: 'alert' } });
 		if (this.busy) { el.createEl('p', { text: 'Import in progress…', attr: { role: 'status' } }); return; }
