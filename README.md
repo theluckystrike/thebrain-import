@@ -6,6 +6,14 @@ The plugin reads the files that you select through the file picker, including ex
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/thebrain-import.gif" alt="A local export preview followed by imported notes and the count report" width="720">
 
+## Quick start
+
+1. Export the brain from TheBrain and keep a copy of the source files.
+2. Open the command palette and select "TheBrain Import: Import thoughts and links".
+3. Select the archive, or the two JSON files together. Check the counts and name changes.
+4. Choose whether tag thoughts get notes. Use "Include tag thoughts as notes".
+5. Select "Import to new folder". Read the report, then open the new notes.
+
 ## Features
 
 ### Select a local export
@@ -94,7 +102,7 @@ Each selected file must be 50 MB or less. An archive must expand to 250 MB or le
 
 The core features are free. Pro features need a GitHub Sponsors sponsorship of theluckystrike: $5 a month or more, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply. Your notes stay readable and editable with or without Pro.
 
-GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike. You need no account for the free features. Pro needs the GitHub account that sponsors.
+GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=thebrain-import. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
 Until you select "Sign in with GitHub" in the settings, TheBrain Import makes no network requests. Sign in uses the GitHub device flow. TheBrain Import sends its public client ID and the scope `read:user` to `https://github.com/login/device/code` and shows you a code. While you enter the code at https://github.com/login/device, it asks `https://github.com/login/oauth/access_token` every few seconds to check the sign-in status. The scope permits profile reads only. GitHub needs this access to show the sponsorship tier. It grants no repository scope and no write access.
 
