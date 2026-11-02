@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from 'obsidian-test-mocks/obsidian';
 import TheBrainImportPlugin from '../src/main';
 import { DEFAULT_SETTINGS, normalizeSettings } from '../src/settings';
-import { makePlan, readJson, type BrainSource } from '../src/brain';
+import { makePlan, readArchive, readJson, type BrainSource } from '../src/brain';
+import { strToU8, zipSync } from 'fflate';
 import { ImportWriteError, noteMarkdown, writeImport } from '../src/writer';
 import { bindPro, isPro, onProChange, resetPro, SPONSORS } from '../src/pro';
 import manifest from '../manifest.json';
@@ -111,5 +112,13 @@ describe('vault import', () => {
 		const content = noteMarkdown(makePlan(s), 'a', 'TheBrain import', false, []);
 		expect(content).toContain('label: "Label: R"');
 		expect(content).toContain('created:');
+	});
+	it('writes web links as a Links section in the free import and counts them', async () => {
+		const links = JSON.stringify([{ SourceId: 'a', Type: 3, Location: 'https://example.org/a b(1)', Name: 'Site [docs]' }]);
+		const s = readArchive(zipSync({ 'thoughts.json': strToU8(JSON.stringify([{ Id: 'a', Name: 'Alpha' }])), 'links.json': strToU8('[]'), 'attachments.json': strToU8(links) }));
+		const content = noteMarkdown(makePlan(s), 'a', 'TheBrain import', false, []);
+		expect(content).toContain('## Links\n\n- [Site \\[docs\\]](https://example.org/a%20b%281%29)\n');
+		const report = await writeImport(memoryVault(), s, makePlan(s), DEFAULT_SETTINGS, false);
+		expect(report).toMatchObject({ notes: 1, links: 1 });
 	});
 });

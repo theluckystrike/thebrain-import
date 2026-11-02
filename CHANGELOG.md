@@ -1,5 +1,12 @@
 # thebrain-import
 
+## 1.1.3
+
+### Patch Changes
+
+- Note bodies import from current TheBrain archives. The importer reads the note that attachments.json names, then `<ThoughtId>/Notes.md`, `Notes/notes.md` and TheBrain 9 and 10 `Notes/notes.html`. Before, only `Notes/notes.md` was read, so notes from current TheBrain exports were missing.
+- Web links attached to a thought go into a Links section in its note, in the free import too. Attachment entries with SourceId and Location (the TheBrain export fields) are copied.
+
 ## 1.1.2
 
 ### Patch Changes

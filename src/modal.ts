@@ -55,7 +55,7 @@ export class ImportModal extends Modal {
 		if (this.report) {
 			new Setting(el).setName('Import complete').setHeading();
 			el.createEl('p', { text: `Created ${this.report.notes} notes in ${this.report.folder}.`, cls: 'thebrain-report' });
-			el.createEl('p', { text: `${this.report.bodies} note bodies · ${this.report.attachments} attachments · ${this.report.canvas ? '1' : '0'} Canvas files` });
+			el.createEl('p', { text: `${this.report.bodies} note bodies · ${this.report.links} web links · ${this.report.attachments} attachments · ${this.report.canvas ? '1' : '0'} Canvas files` });
 			el.createEl('p', { text: `Skipped ${this.report.brokenEndpoints} broken endpoints and ${this.report.skippedAttachments} attachment entries. See Import report.txt in the folder.` });
 			new Setting(el).addButton((b) => b.setButtonText('Close').onClick(() => this.close()));
 			return;
@@ -86,7 +86,7 @@ export class ImportModal extends Modal {
 			const summary = el.createDiv({ cls: 'thebrain-preview', attr: { role: 'status' } });
 			summary.createEl('p', { text: `${plan.notes.length} notes · ${this.source.links.length} link records · ${plan.tagThoughts} tag thoughts` });
 			summary.createEl('p', { text: `${plan.brokenEndpoints} broken endpoints · ${plan.duplicateNames.length} duplicate names · ${plan.skippedRelations} other link records · ${plan.skippedTagLinks} links to omitted tags` });
-			summary.createEl('p', { text: `${plan.bodyCount} available note bodies · ${this.source.attachments.length} attachment entries (${planAttachments(this.source, plan).skipped} unavailable)` });
+			summary.createEl('p', { text: `${plan.bodyCount} available note bodies · ${plan.linkCount} web links · ${this.source.attachments.length} attachment entries (${planAttachments(this.source, plan).skipped} unavailable)` });
 			summary.createEl('p', { text: `New folder: ${importFolder(this.app.vault)}` });
 			if (plan.duplicateNames.length) summary.createEl('p', { text: `Names with suffixes: ${plan.duplicateNames.slice(0, 20).join(', ')}` });
 			const list = summary.createEl('ul');

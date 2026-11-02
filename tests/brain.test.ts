@@ -65,7 +65,39 @@ describe('archive extras', () => {
 		const result = planAttachments(source, makePlan(source));
 		expect(result.files.map((f) => f.file)).toEqual(['Map.pdf', 'Map (2).pdf']);
 		expect(result.files[0]!.bytes).toEqual(new Uint8Array([1, 2, 3]));
-		expect(result.skipped).toBe(3);
+		// Entry 4 is a web link, so it is not a skipped file.
+		expect(result.skipped).toBe(2);
+		expect(makePlan(source).notes[0]!.links).toEqual([{ name: 'Remote.pdf', url: 'https://example.invalid/file' }]);
+	});
+	it('reads notes and web links from a real TheBrain export layout', () => {
+		const entries = [
+			{ Id: 'n1', SourceId: 'a', SourceType: 2, Type: 1, NoteType: 4, Location: 'Notes.md', Name: 'Notes.md' },
+			{ Id: 'u1', SourceId: 'a', SourceType: 2, Type: 3, NoteType: 0, Location: 'https://www.thebrain.com/', Name: 'TheBrain home' },
+			{ Id: 'u2', SourceId: 'a', SourceType: 2, Type: 3, NoteType: 0, Location: 'example.org/page', Name: '' },
+			{ Id: 'f1', SourceId: 'a', SourceType: 2, Type: 1, NoteType: 0, Location: 'Report.pdf', Name: 'Report.pdf' },
+			{ Id: 'i1', SourceId: 'a', SourceType: 2, Type: 12, NoteType: 0, Location: 'pic.png', Name: 'pic.png' },
+			{ Id: 'h1', SourceId: 'b', SourceType: 2, Type: 4, NoteType: 2, Location: 'notes.html', Name: 'notes.html' },
+		];
+		const source = readArchive(archive({
+			'attachments.json': strToU8('\uFEFF' + entries.map((e) => JSON.stringify(e)).join('\n')),
+			'a/Notes.md': strToU8('\uFEFFThought body text'),
+			'a/Report.pdf': new Uint8Array([7]),
+			'a/.data/md-images/pic.png': new Uint8Array([8]),
+			'b/Notes/notes.html': strToU8('<?xml version="1.0"?><html><head><style>p{}</style></head><body><p>Old note</p></body></html>'),
+		}));
+		const plan = makePlan(source);
+		expect(plan.notes.map((n) => n.body)).toEqual(['Thought body text', '<p>Old note</p>']);
+		expect(plan.bodyCount).toBe(2);
+		expect(plan.notes[0]!.links).toEqual([{ name: 'TheBrain home', url: 'https://www.thebrain.com/' }, { name: 'https://example.org/page', url: 'https://example.org/page' }]);
+		expect(plan.linkCount).toBe(2);
+		const files = planAttachments(source, plan);
+		expect(files.files.map((f) => f.file)).toEqual(['Report.pdf']);
+		expect(files.skipped).toBe(0);
+	});
+	it('keeps only web schemes as links', () => {
+		const entries = [{ SourceId: 'a', Type: 3, Location: 'javascript:alert(1)' }, { SourceId: 'a', Type: 3, Location: 'mailto:a@example.org', Name: 'Mail' }];
+		const plan = makePlan(readArchive(archive({ 'attachments.json': strToU8(JSON.stringify(entries)) })));
+		expect(plan.notes[0]!.links).toEqual([{ name: 'Mail', url: 'mailto:a@example.org' }]);
 	});
 	it('finds the documented attachment layouts without a Path', () => {
 		const entries = [{ Id: 'x', ThoughtId: 'a', Name: 'Map.txt' }, { Id: 'y', ThoughtId: 'b', FileName: 'Guide.txt' }];

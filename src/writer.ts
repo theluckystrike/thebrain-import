@@ -6,6 +6,7 @@ export interface ImportReport {
 	folder: string;
 	notes: number;
 	bodies: number;
+	links: number;
 	attachments: number;
 	skippedAttachments: number;
 	canvas: boolean;
@@ -22,6 +23,10 @@ export class ImportWriteError extends Error {
 		super(`Import stopped in ${report.folder} after ${report.notes} notes and ${report.attachments} attachments. ${cause instanceof Error ? cause.message : String(cause)}`);
 	}
 }
+/** Link text keeps one line and escapes the characters that end Markdown link text. */
+const linkText = (value: string): string => value.replace(/[\r\n]+/g, ' ').replace(/([[\]\\])/g, '\\$1');
+/** A link destination has no spaces, parentheses or angle brackets. */
+const linkUrl = (value: string): string => value.replace(/[\s()<>]/g, (c) => encodeURIComponent(c).replace(/[()]/g, (p) => (p === '(' ? '%28' : '%29')));
 // One index for each plan keeps a 10,000 note import linear.
 const indexes = new WeakMap<BrainPlan, Map<string, BrainNote>>();
 export function noteMarkdown(plan: BrainPlan, id: string, folder: string, body: boolean, attachments: string[]): string {
@@ -32,6 +37,7 @@ export function noteMarkdown(plan: BrainPlan, id: string, folder: string, body: 
 	const section = (title: string, ids: string[]) => `## ${title}\n\n${ids.map((id) => `- [[${folder}/${names.get(id)}|${names.get(id)}]]`).join('\n')}${ids.length ? '\n' : ''}\n`;
 	let result = `---\n${stringifyYaml(note.frontmatter)}---\n\n# ${note.name.replace(/[\r\n]/g, ' ')}\n\n`;
 	if (body && note.body) result += `## Notes\n\n${note.body.replace(/^(?:[ \t]*\r?\n)+/, '').trimEnd()}\n\n`;
+	if (note.links.length) result += `## Links\n\n${note.links.map((link) => `- [${linkText(link.name)}](${linkUrl(link.url)})`).join('\n')}\n\n`;
 	result += section('Parents', note.parents) + section('Children', note.children) + section('Jumps', note.jumps);
 	if (attachments.length) result += `## Attachments\n\n${attachments.map((file) => `- [[${folder}/Attachments/${file}|${file}]]`).join('\n')}\n`;
 	return result;
@@ -41,7 +47,7 @@ export function noteMarkdown(plan: BrainPlan, id: string, folder: string, body: 
 export async function writeImport(vault: Pick<Vault, 'getRoot' | 'getAbstractFileByPath' | 'createFolder' | 'create' | 'createBinary'>, source: BrainSource, plan: BrainPlan, options: ImportSettings, pro: boolean): Promise<ImportReport> {
 	if (plan.notes.length === 0) throw new Error('No thoughts to import.');
 	const folder = importFolder(vault);
-	const report: ImportReport = { folder, notes: 0, bodies: 0, attachments: 0, skippedAttachments: 0, canvas: false, brokenEndpoints: plan.brokenEndpoints };
+	const report: ImportReport = { folder, notes: 0, bodies: 0, links: 0, attachments: 0, skippedAttachments: 0, canvas: false, brokenEndpoints: plan.brokenEndpoints };
 	const attachments = pro && options.attachments ? planAttachments(source, plan) : { files: [], skipped: 0 };
 	report.skippedAttachments = attachments.skipped;
 	try {
@@ -56,6 +62,7 @@ export async function writeImport(vault: Pick<Vault, 'getRoot' | 'getAbstractFil
 		for (const note of plan.notes) {
 			await vault.create(normalizePath(`${folder}/${note.file}`), noteMarkdown(plan, note.id, folder, pro && options.bodies, linked.get(note.id) ?? []));
 			report.notes++;
+			report.links += note.links.length;
 			if (pro && options.bodies && note.body) report.bodies++;
 		}
 		if (pro && options.canvas) {

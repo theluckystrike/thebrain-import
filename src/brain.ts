@@ -16,6 +16,11 @@ export interface BrainNote {
 	children: string[];
 	jumps: string[];
 	body: string;
+	links: WebLink[];
+}
+export interface WebLink {
+	name: string;
+	url: string;
 }
 export interface BrainPlan {
 	notes: BrainNote[];
@@ -25,6 +30,7 @@ export interface BrainPlan {
 	skippedTagLinks: number;
 	tagThoughts: number;
 	bodyCount: number;
+	linkCount: number;
 }
 export const MAX_INPUT_BYTES = 50 * 1024 * 1024;
 const MAX_EXPANDED_BYTES = 250 * 1024 * 1024;
@@ -99,6 +105,43 @@ export function safeStem(value: string): string {
 	return stem;
 }
 
+// Attachment types in the TheBrain exchange format: 1 file, 3 web link, 4 HTML notes (TheBrain 9 and 10), 5 icon,
+// 6 notes image, 12 Markdown notes image. Real archives name the thought in SourceId and the file or URL in Location.
+const TYPE_URL = 3;
+const TYPE_NOTES_HTML = 4;
+const NOT_FILES = new Set([5, 6, 12]);
+const attachmentThought = (row: RecordData): string => text(row.SourceId) || text(row.ThoughtId);
+const attachmentLocation = (row: RecordData): string => text(row.Location) || text(row.Path);
+const isNoteRecord = (row: RecordData): boolean => (typeof row.NoteType === 'number' && row.NoteType !== 0) || row.Type === TYPE_NOTES_HTML;
+
+/** A web link entry gives its URL. Other schemes and other entries give null. */
+export function webLinkUrl(row: RecordData): string | null {
+	const location = attachmentLocation(row).trim();
+	if (/^(https?|ftp):\/\//i.test(location) || /^mailto:/i.test(location)) return location;
+	if (row.Type === TYPE_URL && /^[\w-]+(\.[\w-]+)+(\/|$)/.test(location)) return `https://${location}`;
+	return null;
+}
+
+/** TheBrain 9 and 10 write notes as an HTML page. The note keeps the body element content. */
+export function htmlNoteBody(value: string): string {
+	const html = value.replace(/^\uFEFF/, '').replace(/<\?xml[^>]*\?>/i, '');
+	const body = /<body[^>]*>([\s\S]*)<\/body>/i.exec(html)?.[1] ?? html;
+	return body.replace(/<(script|style|head)[^>]*>[\s\S]*?<\/\1>/gi, '').trim();
+}
+
+/** Note text from the paths that TheBrain versions use, first the paths that attachments.json names. */
+function noteBody(source: BrainSource, id: string, locations: string[]): string {
+	const candidates = [...locations.flatMap((loc) => [`${id}/${loc}`, `${id}/Notes/${loc}`]), `${id}/Notes.md`, `${id}/Notes/notes.md`, `${id}/Notes/Notes.md`, `${id}/Notes/notes.html`];
+	for (const candidate of candidates) {
+		const path = archivePath(candidate);
+		const bytes = path ? source.files[path] : undefined;
+		if (!bytes) continue;
+		const value = strFromU8(bytes).replace(/^\uFEFF/, '');
+		return /\.html?$/i.test(candidate) ? htmlNoteBody(value) : value;
+	}
+	return '';
+}
+
 export function tagName(value: string): string {
 	const tag = value.normalize('NFC').replace(/\s+/g, '-').replace(/[^\p{L}\p{N}_/-]/gu, '').replace(/^\/+|\/+$/g, '');
 	return /^\d+$/.test(tag) ? `tag-${tag}` : tag;
@@ -110,6 +153,14 @@ export function makePlan(source: BrainSource, includeTagThoughts = false): Brain
 		const id = text(thought.Id);
 		if (!id || thoughts.has(id)) throw new Error('Thought IDs must be present and unique.');
 		thoughts.set(id, thought);
+	}
+	const noteLocations = new Map<string, string[]>();
+	const webLinks = new Map<string, WebLink[]>();
+	for (const row of source.attachments) {
+		const thoughtId = attachmentThought(row);
+		const url = webLinkUrl(row);
+		if (url) webLinks.set(thoughtId, [...webLinks.get(thoughtId) ?? [], { name: text(row.Name).trim() || url, url }]);
+		else if (isNoteRecord(row) && attachmentLocation(row)) noteLocations.set(thoughtId, [...noteLocations.get(thoughtId) ?? [], attachmentLocation(row)]);
 	}
 	const notes: BrainNote[] = [];
 	const byId = new Map<string, BrainNote>();
@@ -138,11 +189,9 @@ export function makePlan(source: BrainSource, includeTagThoughts = false): Brain
 			}
 		}
 		const frontmatter: RecordData = { thebrain_id: id, label: text(thought.Label), tags: [...tags], created: text(thought.CreationDateTime), modified: text(thought.ModificationDateTime) };
-		const bodyPath = archivePath(`${id}/Notes/notes.md`);
-		const bodyBytes = bodyPath ? source.files[bodyPath] : undefined;
-		const body = bodyBytes ? strFromU8(bodyBytes).replace(/^\uFEFF/, '') : '';
+		const body = noteBody(source, id, noteLocations.get(id) ?? []);
 		// A body with only white space is empty. It gets no count and no Notes heading.
-		const note: BrainNote = { id, name, file: `${file}.md`, frontmatter, parents: [], children: [], jumps: [], body: body.trim() ? body : '' };
+		const note: BrainNote = { id, name, file: `${file}.md`, frontmatter, parents: [], children: [], jumps: [], body: body.trim() ? body : '', links: webLinks.get(id) ?? [] };
 		notes.push(note);
 		byId.set(id, note);
 	}
@@ -165,7 +214,7 @@ export function makePlan(source: BrainSource, includeTagThoughts = false): Brain
 		else if (link.Relation === 3) { add(a.jumps, bid); add(b.jumps, aid); }
 		else skippedRelations++;
 	}
-	return { notes, brokenEndpoints, duplicateNames: [...duplicateNames], skippedRelations, skippedTagLinks, tagThoughts, bodyCount: notes.filter((n) => n.body !== '').length };
+	return { notes, brokenEndpoints, duplicateNames: [...duplicateNames], skippedRelations, skippedTagLinks, tagThoughts, bodyCount: notes.filter((n) => n.body !== '').length, linkCount: notes.reduce((sum, n) => sum + n.links.length, 0) };
 }
 
 export interface AttachmentPlan {
@@ -182,11 +231,13 @@ export function planAttachments(source: BrainSource, plan: BrainPlan): { files: 
 	const used = new Set<string>();
 	const noteIds = new Set(plan.notes.map((note) => note.id));
 	for (const row of source.attachments) {
-		const thoughtId = text(row.ThoughtId);
+		// Web links, note pages, icons and note images are not attachment files.
+		if (webLinkUrl(row) || isNoteRecord(row) || row.IsIcon === true || (typeof row.Type === 'number' && NOT_FILES.has(row.Type))) continue;
+		const thoughtId = attachmentThought(row);
 		const id = text(row.Id);
-		const name = text(row.Name) || text(row.FileName);
-		const explicit = text(row.Path);
-		const candidates = explicit ? [explicit] : [`${thoughtId}/Attachments/${id}/${name}`, `${thoughtId}/Attachments/${name}`, `${thoughtId}/Attachments/${id}`];
+		const explicit = attachmentLocation(row);
+		const name = text(row.Name) || text(row.FileName) || explicit.split('/').pop() || '';
+		const candidates = explicit ? [explicit, `${thoughtId}/${explicit}`, `${thoughtId}/Attachments/${explicit}`] : [`${thoughtId}/Attachments/${id}/${name}`, `${thoughtId}/Attachments/${name}`, `${thoughtId}/Attachments/${id}`];
 		const path = candidates.find((path) => archivePath(path) !== null && Object.prototype.hasOwnProperty.call(source.files, path));
 		if (!noteIds.has(thoughtId) || !name || !path) { skipped++; continue; }
 		const dot = name.lastIndexOf('.');

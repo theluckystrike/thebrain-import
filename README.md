@@ -48,15 +48,19 @@ The first folder is `TheBrain import`. If that path exists, the next candidate i
 
 ### Import note bodies (Pro)
 
-Turn on Note bodies to copy Markdown from `<ThoughtId>/Notes/notes.md` inside the archive. It appears under a Notes heading before the relation sections. Markdown text is preserved; relative image and attachment paths in that text are not rewritten. The preview shows how many nonempty bodies are available.
+Turn on Note bodies to copy each thought note from the archive. The importer reads the note that attachments.json names, then `<ThoughtId>/Notes.md` (current TheBrain), `<ThoughtId>/Notes/notes.md` and `<ThoughtId>/Notes/notes.html` (TheBrain 9 and 10, the body element content). It appears under a Notes heading before the relation sections. Markdown text is preserved; relative image and attachment paths in that text are not rewritten. The preview shows how many nonempty bodies are available.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/note-bodies.png" alt="A source Markdown body under the Notes heading of an imported thought" width="720">
 
 ### Copy attachment files (Pro)
 
-Attachment entries need a ThoughtId and a Name or FileName. A Path can name a relative archive member. Without Path, the importer tries the thought Attachments folder with the attachment Id and name. Matching files go into the new folder's Attachments subfolder. Their thought note gets attachment links. Missing entries and remote files are skipped and counted. The importer does not download remote attachments.
+Attachment entries need a SourceId or ThoughtId and a Location, Name or FileName. A Location or Path can name a file in the thought folder or a relative archive member. Without Path, the importer tries the thought Attachments folder with the attachment Id and name. Matching files go into the new folder's Attachments subfolder. Their thought note gets attachment links. Missing entries are skipped and counted. The importer does not download remote attachments.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/attachments.png" alt="An attachment copied into the import folder and linked from its thought note" width="720">
+
+### Web links
+
+Web link attachments (http, https, ftp and mailto) go into a Links section in their thought note, in the free import too. The importer does not open the links.
 
 ### Create a Canvas file (Pro)
 
@@ -92,7 +96,7 @@ The tests use the public 2019 archive and JSON files from [simoncos/thebrain2dot
 
 ### What was not tested?
 
-A full export with bodies and attachments from a current TheBrain installation was not tested. Tests for those paths use local sample archives. The local app checks use macOS. Linux, Windows, mobile devices, large production exports and a live paid Sponsors account were not tested locally. Source rich text, icons and custom relation names are not imported. Relation codes outside 1 and 3 are counted and skipped.
+A full export with bodies and attachments from a current TheBrain installation was not tested. Tests for those paths use local sample archives. The local app checks use macOS. Linux, Windows, mobile devices, large production exports and a live paid Sponsors account were not tested locally. Source rich text, icons, note images and custom relation names are not imported. Relation codes outside 1 and 3 are counted and skipped.
 
 ### What are the input limits?
 
