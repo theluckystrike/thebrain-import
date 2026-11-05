@@ -24,43 +24,39 @@ Choose one `.brz` archive, or select `thoughts.json` and `links.json` together. 
 
 ### Check the preview
 
-The preview shows the note count, link records, tag thoughts, duplicate names and broken endpoints. A broken endpoint is a thought ID that is absent from the export. Its link is skipped. Two absent IDs in one link count as two endpoints. Duplicate names get file suffixes. The preview lists names with suffixes and the first five output files. It also shows the new folder name before you start.
+The preview shows the note count, link records, tag thoughts, duplicate names and broken endpoints. A broken endpoint is a thought ID that is absent from the export. Its link is skipped. Duplicate names get file suffixes. The preview lists names with suffixes and the first five output files. It also shows the new folder name before you start.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/preview.png" alt="Preview counts for a sample export with a duplicate Plan name and a broken endpoint" width="720">
 
 ### Keep thought properties
 
-A note has `thebrain_id`, `label`, `tags`, `created` and `modified` frontmatter. Dates keep the source text. Missing labels or dates become empty strings. Tag IDs resolve to the names of Kind 4 thoughts. Spaces in tag names become dashes. Tag thoughts do not get their own notes unless you turn on that control. The original thought name becomes the note heading.
+A note has `thebrain_id`, `label`, `tags`, `created` and `modified` frontmatter. Dates keep the source text. Tag IDs resolve to the names of Kind 4 thoughts. Spaces in tag names become dashes. Tag thoughts do not get their own notes unless you turn on that control. The original thought name becomes the note heading.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/properties.png" alt="An imported thought with its source ID label tags and dates" width="720">
 
 ### Follow parent child and jump links
 
-The fixed headings are Parents, Children and Jumps. Relation 1 from A to B puts B under Children in A, and A under Parents in B. Relation 3 puts a jump in both notes. Repeated relations make one line per target and heading. Cycles do not require a tree traversal. Links use the final file names and folder paths, so two thoughts called Plan can keep their own relations.
+The fixed headings are Parents, Children and Jumps. Relation 1 from A to B puts B under Children in A, and A under Parents in B. Relation 3 puts a jump in both notes. Repeated relations make one line per target and heading. Links use the final file names and folder paths, so two thoughts called Plan can keep their own relations.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/links.png" alt="Parent child and jump wikilinks in an imported knowledge map" width="720">
 
 ### Get a new folder and count report
 
-The first folder is `TheBrain import`. If that path exists, the next candidate is `TheBrain import 2`, then higher numbers. The importer creates files through the vault API. At completion, the dialog shows the note and extra counts. `Import report.txt` stores those counts in the new folder. A failed write shows the folder and the number of files completed. Check that folder before you retry.
+The first folder is `TheBrain import`. If that path exists, the next candidate is `TheBrain import 2`, then higher numbers. At completion, the dialog shows the note and extra counts. `Import report.txt` stores those counts in the new folder. A failed write shows the folder and the number of files completed. Check that folder before you retry.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/report.png" alt="The completed import report with the folder and file counts" width="720">
 
 ### Import note bodies (Pro)
 
-Turn on Note bodies to copy each thought note from the archive. The importer reads the note that attachments.json names, then `<ThoughtId>/Notes.md` (current TheBrain), `<ThoughtId>/Notes/notes.md` and `<ThoughtId>/Notes/notes.html` (TheBrain 9 and 10, the body element content). It appears under a Notes heading before the relation sections. Markdown text is preserved; relative image and attachment paths in that text are not rewritten. The preview shows how many nonempty bodies are available.
+Turn on Note bodies to copy each thought note from the archive. The importer reads the note that `attachments.json` names, then `<ThoughtId>/Notes.md` (current TheBrain), `<ThoughtId>/Notes/notes.md` and `<ThoughtId>/Notes/notes.html` (TheBrain 9 and 10, the body element content). It appears under a Notes heading before the relation sections. Markdown text is preserved; relative image and attachment paths in that text are not rewritten. The preview shows how many nonempty bodies are available.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/note-bodies.png" alt="A source Markdown body under the Notes heading of an imported thought" width="720">
 
 ### Copy attachment files (Pro)
 
-Attachment entries need a SourceId or ThoughtId and a Location, Name or FileName. A Location or Path can name a file in the thought folder or a relative archive member. Without Path, the importer tries the thought Attachments folder with the attachment Id and name. Matching files go into the new folder's Attachments subfolder. Their thought note gets attachment links. Missing entries are skipped and counted. The importer does not download remote attachments.
+Attachment entries need a SourceId or ThoughtId and a Location, Name or FileName. A Location or Path can name a file in the thought folder or a relative archive member. Without Path, the importer tries the thought Attachments folder with the attachment Id and name. Matching files go into the new folder's Attachments subfolder. Their thought note gets attachment links. Missing entries are skipped and counted. Web links (http, https, ftp and mailto) go into a Links section of the thought note, also in the free import. The importer does not download or open them.
 
 <img src="https://raw.githubusercontent.com/theluckystrike/thebrain-import/HEAD/docs/attachments.png" alt="An attachment copied into the import folder and linked from its thought note" width="720">
-
-### Web links
-
-Web link attachments (http, https, ftp and mailto) go into a Links section in their thought note, in the free import too. The importer does not open the links.
 
 ### Create a Canvas file (Pro)
 
@@ -80,7 +76,7 @@ TheBrain Import is available in the [Obsidian community directory](https://commu
 4. Choose whether tag thoughts should have notes. With Pro, expand Archive extras and choose the extra files.
 5. Select "Import to new folder". Read the report, then open the new notes.
 
-A second run makes another folder. It does not update a previous import. The importer does not merge edits that you make after migration.
+A second run makes another folder. It does not update a previous import.
 
 ## Settings
 
@@ -105,6 +101,8 @@ Each selected file must be 50 MB or less. An archive must expand to 250 MB or le
 ## Payment, account and network
 
 The core features are free. Pro features need a GitHub Sponsors sponsorship of theluckystrike: $5 a month or more, or $15 once. A total payment of $15 meets the payment requirement for Pro without further payment. Sign-in and the checks below still apply. Your notes stay readable and editable with or without Pro.
+
+[One payment turns on Pro in every NoteMods plugin](https://notemods.com/pro/).
 
 GitHub handles the payment. Sponsor at https://github.com/sponsors/theluckystrike?frequency=one-time&metadata_source=thebrain-import. You need no account for the free features. Pro needs the GitHub account that sponsors.
 
