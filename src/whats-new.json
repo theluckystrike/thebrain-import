@@ -1,10 +1,9 @@
 {
 	"id": "thebrain-import",
 	"name": "TheBrain Import",
-	"version": "1.1.3",
+	"version": "1.1.4",
 	"changes": [
-		"Note bodies now import from current TheBrain archives (Notes.md) and from TheBrain 9 and 10 HTML notes.",
-		"Web links attached to a thought go into a Links section in its note, in the free import too."
+		"The Pro notice of TheBrain Import now says that one payment turns on Pro in every NoteMods plugin."
 	],
 	"tip": "You can import without a .brz archive. Select thoughts.json and links.json together in the file picker.",
 	"thanks": "Hi, I am Michael, a solo developer in Poland. TheBrain Import is one of over 100 small plugins that I make. Thank you for moving your notes into Obsidian with it.",

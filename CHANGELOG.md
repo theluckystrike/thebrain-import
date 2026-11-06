@@ -1,5 +1,11 @@
 # thebrain-import
 
+## 1.1.4
+
+### Patch Changes
+
+- 371e979: The Pro notice of TheBrain Import now says that one payment turns on Pro in every NoteMods plugin.
+
 ## 1.1.3
 
 ### Patch Changes

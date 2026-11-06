@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { makePlan, planAttachments, readJson, safeStem } from '../src/brain';
 import { noteMarkdown } from '../src/writer';
+import { GROWTH_LIMIT, growth } from './growth';
 
 describe('review file names', () => {
 	it('does not make a hidden file from a leading dot', () => {
@@ -30,12 +31,19 @@ describe('review attachment names', () => {
 
 describe('review large import', () => {
 	it('writes the text of 10,000 linked notes in linear time', () => {
-		const thoughts = Array.from({ length: 10000 }, (_, i) => ({ Id: `t${i}`, Name: `Thought ${i}` }));
-		const links = Array.from({ length: 9999 }, (_, i) => ({ ThoughtIdA: `t${i}`, ThoughtIdB: `t${i + 1}`, Relation: 1 }));
-		const plan = makePlan(readJson(JSON.stringify(thoughts), JSON.stringify(links)));
-		const start = performance.now();
+		const planOf = (n: number) => {
+			const thoughts = Array.from({ length: n }, (_, i) => ({ Id: `t${i}`, Name: `Thought ${i}` }));
+			const links = Array.from({ length: n - 1 }, (_, i) => ({ ThoughtIdA: `t${i}`, ThoughtIdB: `t${i + 1}`, Relation: 1 }));
+			return makePlan(readJson(JSON.stringify(thoughts), JSON.stringify(links)));
+		};
+		const plan = planOf(10000);
 		const text = plan.notes.map((note) => noteMarkdown(plan, note.id, 'F', false, []));
-		expect(performance.now() - start).toBeLessThan(20000);
+		// Growth guard: 10,000 notes against 1,000 notes, both timed in this test (tests/growth.ts).
+		const g = growth((n) => {
+			const p = planOf(n);
+			return () => p.notes.map((note) => noteMarkdown(p, note.id, 'F', false, []));
+		}, 10000);
+		expect(g.ratio, g.text).toBeLessThan(GROWTH_LIMIT);
 		expect(text[1]).toContain('- [[F/Thought 0|Thought 0]]');
 		expect(text[1]).toContain('- [[F/Thought 2|Thought 2]]');
 	});

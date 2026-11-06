@@ -8,7 +8,7 @@ import manifest from '../manifest.json';
 
 // A free user can select the Archive extras (Pro) toggles of the import window. Each select shows the shared Pro notice
 // with the "Sponsor on GitHub" button, and the toggle shows off again. No extra is imported.
-const PITCH = 'Sponsor on GitHub, then sign in from the plugin settings.';
+const PITCH = 'One payment turns on Pro in every NoteMods plugin. Sponsor on GitHub, then sign in from the plugin settings.';
 const LABELS = ['Note bodies (Pro)', 'Attachment files (Pro)', 'Canvas file (Pro)'];
 
 function fakePro(pro: boolean): SponsorsManager {
